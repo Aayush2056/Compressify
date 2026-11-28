@@ -2,11 +2,9 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
-const uploadDir = "src/uploads";
+const uploadDir = path.resolve("src/uploads");
 
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
 
@@ -17,7 +15,8 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
 
         const uniqueName =
-            Date.now() + "-" +
+            Date.now() +
+            "-" +
             Math.round(Math.random() * 1E9) +
             path.extname(file.originalname);
 
@@ -37,15 +36,20 @@ const allowedFormats = [
 
 const fileFilter = (req, file, cb) => {
 
-    const extension = path.extname(file.originalname).toLowerCase();
+    const extension =
+        path.extname(file.originalname).toLowerCase();
 
     if (
         file.mimetype.startsWith("video/") &&
         allowedFormats.includes(extension)
     ) {
+
         cb(null, true);
+
     } else {
+
         cb(new Error("Unsupported video format"));
+
     }
 
 };
